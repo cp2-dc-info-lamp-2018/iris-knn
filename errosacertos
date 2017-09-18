@@ -1,0 +1,184 @@
+import random
+import math
+import numpy as np
+
+# =====================
+
+peso_medio_homem = []
+qtd_dados = 100
+k = 5
+erros = 0
+acertos = 0
+
+for i in range (qtd_dados):
+    
+    
+    peso_medio_homem.append( random.normalvariate(70 , 10) )
+    
+# =====================
+
+altura_media_homem = []
+
+for j in range (qtd_dados):
+    
+    altura_media_homem.append(random.normalvariate(1.70 , 0.10))
+    
+# =====================
+    
+peso_medio_mulher = []
+
+for i in range (qtd_dados):
+    
+    peso_medio_mulher.append(random.normalvariate(63, 8))
+    
+# =====================
+
+altura_media_mulher = []
+
+for l in range (qtd_dados):
+    
+    altura_media_mulher.append(random.normalvariate(1.60, 0.10))
+    
+# =====================
+
+np_peso_medio_homem = np.array(peso_medio_homem)
+np_peso_medio_mulher = np.array(peso_medio_mulher)
+np_altura_media_homem = np.array(altura_media_homem)
+np_altura_media_mulher = np.array(altura_media_mulher)
+
+for x in range (100):
+    
+    Pessoas = []
+
+    for case in range (2 * qtd_dados):
+    
+        Pessoas.append([0, 0])
+
+    for a in range (qtd_dados):
+    
+        Pessoas[a][0] = np_peso_medio_homem[a]
+        Pessoas[a][1] = np_altura_media_homem[a]
+    
+    for b in range (qtd_dados):
+    
+        Pessoas[b + qtd_dados][0] = np_peso_medio_mulher[b]
+        Pessoas[b + qtd_dados][1] = np_altura_media_mulher[b]
+    
+    Sexo = []
+
+    for zeros in range (2 * qtd_dados):
+    
+        Sexo.append(0)
+
+    for c in range (2 * qtd_dados):
+
+        if c < qtd_dados :
+        
+            Sexo[c] = 0
+        
+        else:
+        
+            Sexo[c] = 1
+
+    Distancia = []
+    distancia_temp = []
+
+    def distancia (a, b, n):
+        c = 0
+        for i in range (n):
+            c = (a[i]-b[i])**2 + c
+        d = np.sqrt(c)
+        return d
+
+
+    for d in range(2 * qtd_dados):
+    
+        for f in range(2 * qtd_dados):
+        
+            pessoa_d = [Pessoas[d][0], Pessoas[d][1]]
+            pessoa_f = [Pessoas[f][0], Pessoas[f][1]]
+            dist = distancia (pessoa_d, pessoa_f, 2)
+            distancia_temp.append(dist)
+    
+        Distancia.append(distancia_temp)
+        distancia_temp = []  
+
+    np_Distancia = np.array(Distancia)
+
+    sexo_sort = random.randint(0, 1)
+
+    if (sexo_sort == 0):
+    
+        pas =  [random.normalvariate(70, 10), random.normalvariate(1.70, 0.10)] #Pessoa Altura Sorteada
+
+    elif (sexo_sort == 1):
+    
+        pas = [random.normalvariate(63, 8), random.normalvariate(1.60, 0.10)]
+
+    Pessoas.append(pas)
+    dist = []
+
+    for i in range(2 * qtd_dados):
+    
+        dist.append(distancia(pas, Pessoas[i], 2))
+
+
+
+    size = 2 * qtd_dados + 1
+    matriz_maior = np.zeros(   (size, size)  )
+
+    for i in range(2 * qtd_dados):
+    
+        for j in range(2 * qtd_dados):
+        
+            matriz_maior[i][j] = np_Distancia[i][j]
+
+    for i in range(2 * qtd_dados):
+    
+        matriz_maior[size - 1][i] = dist[i]
+    
+    for i in range(2 * qtd_dados):
+    
+        matriz_maior[i][size - 1] = dist[i]
+    
+    vizinhos_mais_proximos = np.argsort(matriz_maior, axis = 1)
+
+    homem = 0
+    mulher = 0
+
+    for i in range(1, k+1):
+        vizinho = vizinhos_mais_proximos[size - 1][i]
+        Sexo[vizinho]
+        if (Sexo[vizinho] == 0):
+            homem = homem + 1
+        else:
+            mulher = mulher + 1
+        
+        prob_homem = homem/k
+        prob_mulher = mulher/k
+
+    print('Probabilidade de ser homem: ', prob_homem)
+    print('Probabilidade de ser mulher: ', prob_mulher)
+
+    if (sexo_sort == 0):
+        sex = 'binino'
+        print('É ', sex)
+    else:
+        sex = 'binina'
+        print('É ', sex)
+    
+    if (prob_homem > prob_mulher and sex == 'binino' ):
+        acertos = acertos + 1
+        
+    if (prob_homem > prob_mulher and sex == 'binina' ):
+        erros = erros + 1
+    
+    if (prob_mulher > prob_homem and sex == 'binina' ):
+        acertos = acertos + 1
+        
+    if (prob_mulher > prob_homem and sex == 'binino' ):
+        erros = erros + 1
+
+print('Acertos ', acertos)
+print('Erros ', erros)
+        
